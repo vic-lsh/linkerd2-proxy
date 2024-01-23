@@ -19,6 +19,7 @@ use tracing_subscriber::{
 #[cfg(feature = "stream")]
 use tracing_subscriber::{layer::Layered, Registry};
 
+use tokio::time::Instant;
 pub use tracing::Subscriber;
 pub use tracing_subscriber::{registry, EnvFilter};
 
@@ -28,6 +29,34 @@ const ENV_ACCESS_LOG: &str = "LINKERD2_PROXY_ACCESS_LOG";
 
 const DEFAULT_LOG_LEVEL: &str = "warn,linkerd=info,trust_dns=error";
 const DEFAULT_LOG_FORMAT: &str = "PLAIN";
+
+pub struct TraceTimer {
+    desc: &'static str,
+    inner: Instant,
+}
+
+impl TraceTimer {
+    pub fn new(desc: &'static str) -> Self {
+        Self {
+            desc,
+            inner: Instant::now(),
+        }
+    }
+}
+
+impl Drop for TraceTimer {
+    fn drop(&mut self) {
+        println!("TIMER {}: {}ns", self.desc, self.inner.elapsed().as_nanos());
+    }
+}
+
+#[macro_export]
+macro_rules! trace_time {
+    ($e:expr, $desc:expr) => {{
+        let _ = TraceTimer::new($desc);
+        $e
+    }};
+}
 
 #[derive(Debug, Default)]
 #[must_use]

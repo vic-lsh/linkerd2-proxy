@@ -13,7 +13,8 @@ use linkerd_app_core::{
 };
 use linkerd_proxy_server_policy::{grpc, http, route::RouteMatch};
 use std::{sync::Arc, task};
-use tokio::time::Instant;
+
+use linkerd_tracing::{trace_time, TraceTimer};
 
 #[cfg(test)]
 mod tests;
@@ -136,35 +137,6 @@ macro_rules! try_fut {
     };
 }
 
-struct Timer {
-    desc: &'static str,
-    inner: Instant,
-}
-
-impl Timer {
-    fn new(desc: &'static str) -> Self {
-        Self {
-            desc,
-            inner: Instant::now(),
-        }
-    }
-}
-
-impl Drop for Timer {
-    fn drop(&mut self) {
-        println!("TIMER {}: {}ns", self.desc, self.inner.elapsed().as_nanos());
-    }
-}
-
-macro_rules! time {
-    ($e:expr, $desc:expr) => {{
-        let time = Instant::now();
-        let x = $e;
-        println!("TIMER {}: {}ns", $desc, time.elapsed().as_nanos());
-        x
-    }};
-}
-
 impl<B, T, N, S> svc::Service<::http::Request<B>> for HttpPolicyService<T, N>
 where
     T: Clone,
@@ -191,7 +163,7 @@ where
             None => err!(self.mk_route_not_found()),
             Some(Routes::Http(routes)) => {
                 let (permit, mtch, route) =
-                    time!(try_fut!(self.authorize(&routes, &req)), "authorization");
+                    trace_time!(try_fut!(self.authorize(&routes, &req)), "authorization");
                 try_fut!(apply_http_filters(mtch, route, &mut req));
                 permit
             }
@@ -311,14 +283,14 @@ fn apply_http_filters<B>(
     for filter in &route.filters {
         match filter {
             http::Filter::InjectFailure(fail) => {
-                let _ = Timer::new("HTTP fault injection");
+                let _ = TraceTimer::new("HTTP fault injection");
                 if let Some(http::filter::FailureResponse { status, message }) = fail.apply() {
                     return Err(HttpRouteInjectedFailure { status, message }.into());
                 }
             }
 
             http::Filter::Redirect(redir) => {
-                let _ = Timer::new("HTTP redirect");
+                let _ = TraceTimer::new("HTTP redirect");
                 match redir.apply(req.uri(), &r#match) {
                     Ok(Some(http::filter::Redirection { status, location })) => {
                         return Err(HttpRouteRedirect { status, location }.into());
@@ -335,7 +307,7 @@ fn apply_http_filters<B>(
             }
 
             http::Filter::RequestHeaders(rh) => {
-                time!(rh.apply(req.headers_mut()), "HTTP request header mutation")
+                trace_time!(rh.apply(req.headers_mut()), "HTTP request header mutation")
             }
 
             http::Filter::InternalError(msg) => {
@@ -351,14 +323,14 @@ fn apply_grpc_filters<B>(route: &grpc::Policy, req: &mut ::http::Request<B>) -> 
     for filter in &route.filters {
         match filter {
             grpc::Filter::InjectFailure(fail) => {
-                let _ = Timer::new("gRPC fault injection");
+                let _ = TraceTimer::new("gRPC fault injection");
                 if let Some(grpc::filter::FailureResponse { code, message }) = fail.apply() {
                     return Err(GrpcRouteInjectedFailure { code, message }.into());
                 }
             }
 
             grpc::Filter::RequestHeaders(rh) => {
-                time!(rh.apply(req.headers_mut()), "gRPC request header mutation");
+                trace_time!(rh.apply(req.headers_mut()), "gRPC request header mutation");
             }
 
             grpc::Filter::InternalError(msg) => {
