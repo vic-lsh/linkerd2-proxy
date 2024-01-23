@@ -3,6 +3,7 @@ use crate::{Profile, Receiver, ReceiverStream};
 use futures::{future, prelude::*};
 use linkerd_error::{Error, Result};
 use linkerd_stack::{layer, NewService, Param, Proxy, Service};
+use linkerd_tracing::TraceTimer;
 use std::{
     collections::{hash_map, HashMap, HashSet},
     sync::Arc,
@@ -116,6 +117,8 @@ where
     }
 
     fn call(&mut self, req: http::Request<B>) -> Self::Future {
+        TraceTimer::new("HTTP proxy router handler");
+
         match super::route_for_request(&self.http_routes, &req) {
             None => future::Either::Left({
                 // Use the inner service directly if no route matches the

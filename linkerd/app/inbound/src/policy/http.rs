@@ -162,8 +162,10 @@ where
         let permit = match self.policy.routes() {
             None => err!(self.mk_route_not_found()),
             Some(Routes::Http(routes)) => {
-                let (permit, mtch, route) =
-                    trace_time!(try_fut!(self.authorize(&routes, &req)), "authorization");
+                let (permit, mtch, route) = trace_time!(
+                    try_fut!(self.authorize(&routes, &req)),
+                    "HTTP authorization"
+                );
                 try_fut!(apply_http_filters(mtch, route, &mut req));
                 permit
             }

@@ -2045,6 +2045,7 @@ dependencies = [
  "linkerd-stack",
  "linkerd-tonic-stream",
  "linkerd-tonic-watch",
+ "linkerd-tracing",
  "linkerd2-proxy-api",
  "once_cell",
  "prost-types",
