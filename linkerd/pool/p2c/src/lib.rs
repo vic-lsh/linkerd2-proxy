@@ -8,6 +8,7 @@
 use ahash::AHashMap;
 use futures::prelude::*;
 use linkerd_error::Error;
+use tokio::time::Instant;
 use linkerd_metrics::prom;
 use linkerd_pool::Pool;
 use linkerd_stack::{NewService, Service};
@@ -242,8 +243,10 @@ where
     /// cases, the caller must add endpoints and then wait for new endpoints to
     /// become ready.
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        let time = Instant::now();
         loop {
             tracing::trace!(pending = self.pool.pending_len(), "Polling pending");
+
             match self.pool.poll_pending(cx)? {
                 Poll::Ready(()) => tracing::trace!("All endpoints are ready"),
                 Poll::Pending => tracing::trace!("Endpoints are pending"),
@@ -265,6 +268,9 @@ where
 
             tracing::trace!(ready.index = idx, "Ready");
             self.next_idx = Some(idx);
+
+            println!("p2c took {}ns", time.elapsed().as_nanos());
+
             return Poll::Ready(Ok(()));
         }
     }
