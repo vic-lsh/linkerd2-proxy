@@ -53,7 +53,7 @@ impl Drop for TraceTimer {
 #[macro_export]
 macro_rules! trace_time {
     ($e:expr, $desc:expr) => {{
-        let _ = TraceTimer::new($desc);
+        let _timer = TraceTimer::new($desc);
         $e
     }};
 }
