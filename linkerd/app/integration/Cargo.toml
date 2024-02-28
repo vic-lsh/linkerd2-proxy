@@ -22,7 +22,7 @@ futures = { version = "0.3", default-features = false, features = ["executor"] }
 h2 = "0.3"
 http = "0.2"
 http-body = "0.4"
-hyper = { version = "0.14", features = [
+hyper = { path = "../../../crates/hyper", features = [
     "http1",
     "http2",
     "stream",
