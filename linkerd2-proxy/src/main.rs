@@ -32,6 +32,7 @@ fn main() {
             std::process::exit(EX_USAGE);
         }
     };
+    // console_subscriber::init();
 
     info!(
         "{profile} {version} ({sha}) by {vendor} on {date}",

@@ -18,6 +18,8 @@ thingbuf = { version = "0.1.4", features = ["std"], optional = true }
 tokio = { version = "1", features = ["time"] }
 tracing = "0.1"
 tracing-log = "0.2"
+console-subscriber = "0.2.0"
+tracing-flame = "0.2.0"
 
 [dependencies.tracing-subscriber]
 version = "0.3.16"

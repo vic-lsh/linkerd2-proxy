@@ -13,6 +13,7 @@ use linkerd_error::Error;
 use std::str;
 use tokio::time;
 use tracing::Dispatch;
+use tracing_flame::FlameLayer;
 use tracing_subscriber::{
     filter::LevelFilter, fmt::format, prelude::*, registry::LookupSpan, reload, Layer,
 };
@@ -222,6 +223,19 @@ impl Settings {
 
         // Access logging is optionally enabled process-wide.
         let registry = registry.with(self.access_log.map(access_log::build));
+
+        // Add tokio-console support
+        // let console_layer = console_subscriber::ConsoleLayer::builder().spawn();
+        // let registry = registry
+        //     .with(console_layer)
+        //     .with(tracing_subscriber::fmt::layer());
+
+        // Add tracing-flame integration
+        let (flame_layer, _guard) = FlameLayer::with_file("/logging/tracing.folded")
+            .expect("creating flamegraph layer failed");
+        let registry = registry
+            .with(tracing_subscriber::fmt::Layer::default())
+            .with(flame_layer);
 
         // The handle controls the logging system at runtime.
         let handle = Handle {
