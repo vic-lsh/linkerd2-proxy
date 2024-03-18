@@ -23,6 +23,35 @@ use tower::{
     ready_cache::{error::Failed, ReadyCache},
 };
 
+
+pub struct TraceTimer {
+    desc: &'static str,
+    inner: Instant,
+}
+
+impl TraceTimer {
+    pub fn new(desc: &'static str) -> Self {
+        Self {
+            desc,
+            inner: Instant::now(),
+        }
+    }
+}
+
+impl Drop for TraceTimer {
+    fn drop(&mut self) {
+        println!("TIMER {}: {}ns", self.desc, self.inner.elapsed().as_nanos());
+    }
+}
+
+#[macro_export]
+macro_rules! trace_time {
+    ($e:expr, $desc:expr) => {{
+        let _timer = TraceTimer::new($desc);
+        $e
+    }};
+}
+
 /// Dispatches requests to a pool of services selected by the
 /// power-of-two-choices algorithm.
 #[derive(Debug)]
@@ -243,7 +272,8 @@ where
     /// cases, the caller must add endpoints and then wait for new endpoints to
     /// become ready.
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        let time = Instant::now();
+        let _timer = TraceTimer::new("P2C");
+
         loop {
             tracing::trace!(pending = self.pool.pending_len(), "Polling pending");
 
@@ -268,8 +298,6 @@ where
 
             tracing::trace!(ready.index = idx, "Ready");
             self.next_idx = Some(idx);
-
-            println!("p2c took {}ns", time.elapsed().as_nanos());
 
             return Poll::Ready(Ok(()));
         }
