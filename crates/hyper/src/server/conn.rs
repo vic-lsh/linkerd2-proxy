@@ -922,6 +922,9 @@ where
     type Output = crate::Result<()>;
 
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let span = tracing::info_span!("hyper::server::conn::Connection");
+        let _guard = span.enter();
+
         loop {
             match ready!(Pin::new(self.conn.as_mut().unwrap()).poll(cx)) {
                 Ok(done) => {

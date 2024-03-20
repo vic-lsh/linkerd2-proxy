@@ -292,6 +292,7 @@ impl Recorder {
 // ===== impl Ponger =====
 
 impl Ponger {
+    #[tracing::instrument(skip_all)]
     pub(super) fn poll(&mut self, cx: &mut task::Context<'_>) -> Poll<Ponged> {
         let now = Instant::now();
         let mut locked = self.shared.lock().unwrap();

@@ -28,6 +28,7 @@ const ENV_LOG_FORMAT: &str = "LINKERD2_PROXY_LOG_FORMAT";
 const ENV_ACCESS_LOG: &str = "LINKERD2_PROXY_ACCESS_LOG";
 
 const DEFAULT_LOG_LEVEL: &str = "warn,linkerd=info,trust_dns=error";
+const NEW_DEFAULT_LOG_LEVEL: &str = "trace";
 const DEFAULT_LOG_FORMAT: &str = "PLAIN";
 
 #[derive(Debug, Default)]
@@ -66,9 +67,10 @@ impl Settings {
     pub fn from_env() -> Self {
         let now = time::Instant::now();
         Self {
-            filter: std::env::var(ENV_LOG_LEVEL)
-                .ok()
-                .unwrap_or_else(|| DEFAULT_LOG_LEVEL.to_string()),
+            filter: NEW_DEFAULT_LOG_LEVEL.to_string(),
+            // filter: std::env::var(ENV_LOG_LEVEL)
+            //     .ok()
+            //     .unwrap_or_else(|| DEFAULT_LOG_LEVEL.to_string()),
             format: std::env::var(ENV_LOG_FORMAT)
                 .ok()
                 .unwrap_or_else(|| DEFAULT_LOG_FORMAT.to_string()),
@@ -234,7 +236,7 @@ impl Settings {
         let (flame_layer, _guard) = FlameLayer::with_file("/logging/tracing.folded")
             .expect("creating flamegraph layer failed");
         let registry = registry
-            .with(tracing_subscriber::fmt::Layer::default())
+            // .with(tracing_subscriber::fmt::Layer::default())
             .with(flame_layer);
 
         // The handle controls the logging system at runtime.

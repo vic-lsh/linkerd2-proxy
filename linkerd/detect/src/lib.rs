@@ -3,6 +3,7 @@
 
 use bytes::BytesMut;
 use linkerd_error::Error;
+use tracing::Instrument;
 use linkerd_io as io;
 use linkerd_stack::{layer, ExtractParam, NewService};
 use std::{
@@ -172,7 +173,7 @@ where
             drop(svc);
 
             Ok(())
-        })
+        }.instrument(tracing::info_span!("DetectService::call")))
     }
 }
 

@@ -555,6 +555,7 @@ where
 {
     type Output = crate::Result<()>;
 
+    #[tracing::instrument(skip_all)]
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         match ready!(Pin::new(self.inner.as_mut().unwrap()).poll(cx))? {
             proto::Dispatched::Shutdown => Poll::Ready(Ok(())),

@@ -124,7 +124,7 @@ where
 
                 Ok(Connection { tx })
             }
-            .instrument(debug_span!("h2").or_current()),
+            .instrument(tracing::info_span!("h2").or_current()),
         )
     }
 }

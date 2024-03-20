@@ -242,6 +242,9 @@ where
     /// cases, the caller must add endpoints and then wait for new endpoints to
     /// become ready.
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        let span = tracing::info_span!("P2cPool::poll_ready");
+        let _guard = span.enter();
+
         loop {
             tracing::trace!(pending = self.pool.pending_len(), "Polling pending");
             match self.pool.poll_pending(cx)? {
@@ -270,6 +273,9 @@ where
     }
 
     fn call(&mut self, req: Req) -> Self::Future {
+        let span = tracing::info_span!("P2cPool::call");
+        let _guard = span.enter();
+
         let idx = self.next_idx.take().expect("call before ready");
         self.pool.call_ready_index(idx, req).err_into()
     }

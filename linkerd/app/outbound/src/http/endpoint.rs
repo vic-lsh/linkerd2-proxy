@@ -100,6 +100,7 @@ impl<T> Outbound<svc::ArcNewHttp<T, http::BoxBody>> {
                 // Drive the connection to completion regardless of whether the reconnect is being
                 // actively polled.
                 .push_on_service(svc::layer::mk(svc::SpawnReady::new))
+                .instrument(|_: &_| tracing::debug_span!("http.endpoint.SpawnReady"))
                 .push_new_reconnect(backoff)
                 .push(svc::NewMapErr::layer_from_target::<EndpointError, _>())
                 .push_on_service(svc::MapErr::layer_boxed())
@@ -109,11 +110,13 @@ impl<T> Outbound<svc::ArcNewHttp<T, http::BoxBody>> {
                 // is only done when the `Closable` parameter is set to true.
                 // This module always strips error headers from responses.
                 .push(NewHandleProxyErrorHeaders::layer())
+                .instrument(|_: &_| tracing::debug_span!("http.endpoint.HandleProxyErrorHeaders"))
                 // Handle connection-level errors eagerly so that we can report 5XX failures in tap
                 // and metrics. HTTP error metrics are not incremented here so that errors are not
                 // double-counted--i.e., endpoint metrics track these responses and error metrics
                 // track proxy errors that occur higher in the stack.
                 .push(ClientRescue::layer(config.emit_headers))
+                .instrument(|_: &_| tracing::debug_span!("http.endpoint.ClientRescue"))
                 .push_on_service(http::BoxRequest::layer())
                 .push(tap::NewTapHttp::layer(rt.tap.clone()))
                 .push(
@@ -122,11 +125,13 @@ impl<T> Outbound<svc::ArcNewHttp<T, http::BoxBody>> {
                         .http_endpoint
                         .to_layer::<classify::Response, _, _>(),
                 )
+                .instrument(|_: &_| tracing::debug_span!("http.endpoint.rt.metrics"))
                 .push_on_service(http_tracing::client(
                     rt.span_sink.clone(),
                     crate::trace_labels(),
                 ))
                 .push(NewRequireIdentity::layer())
+                .instrument(|_: &_| tracing::debug_span!("http.endpoint.RequireIdentity"))
                 .push(http::NewOverrideAuthority::layer(vec![
                     "host",
                     CANONICAL_DST_HEADER,

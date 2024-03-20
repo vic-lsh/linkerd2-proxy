@@ -15,6 +15,7 @@ use std::{
     task::{Context, Poll},
 };
 use tower::Service;
+use tracing::Instrument;
 
 #[derive(Clone, Debug)]
 pub struct AcceptPermittedClients {
@@ -51,7 +52,7 @@ impl AcceptPermittedClients {
                 .serve_connection(io, HyperServerSvc::new(svc))
                 .await
                 .map_err(Into::into)
-        })
+        }.instrument(tracing::info_span!("AcceptPermittedClients::serve")))
     }
 
     fn serve_authenticated<I>(&self, io: I) -> ServeFuture
@@ -82,6 +83,9 @@ where
     }
 
     fn call(&mut self, conn: Connection<T, I>) -> Self::Future {
+        let span = tracing::info_span!("AcceptPermittedClients::call");
+        let _guard = span.enter();
+
         match conn {
             ((Conditional::Some(tls), _), io) => {
                 if let tls::ServerTls::Established {

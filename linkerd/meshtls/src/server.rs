@@ -100,6 +100,8 @@ where
 
     #[inline]
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        let span = tracing::info_span!("meshtls::Server::poll_ready");
+        let _guard = span.enter();
         match self {
             #[cfg(feature = "boring")]
             Self::Boring(svc) => <boring::Server as Service<I>>::poll_ready(svc, cx),
@@ -114,6 +116,8 @@ where
 
     #[inline]
     fn call(&mut self, io: I) -> Self::Future {
+        let span = tracing::info_span!("meshtls::Server::call");
+        let _guard = span.enter();
         match self {
             #[cfg(feature = "boring")]
             Self::Boring(svc) => TerminateFuture::Boring(svc.call(io)),

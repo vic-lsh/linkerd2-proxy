@@ -142,6 +142,7 @@ where
 {
     type Output = io::Result<(io::EitherIo<I, J>, ConnectMeta<M>)>;
 
+    #[tracing::instrument(skip_all)]
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         loop {
             match self.as_mut().project() {
