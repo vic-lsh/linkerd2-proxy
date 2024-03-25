@@ -62,6 +62,7 @@ pub struct Retries {
 #[derive(Clone, Default)]
 struct Labels(Arc<std::collections::BTreeMap<String, String>>);
 
+#[tracing::instrument(skip_all)]
 pub fn route_for_request<'r, K, B>(
     http_routes: &'r [(RequestMatch, K)],
     request: &http::Request<B>,

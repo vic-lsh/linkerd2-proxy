@@ -291,6 +291,7 @@ impl Send {
         Ok(())
     }
 
+    #[tracing::instrument(skip_all)]
     pub fn poll_complete<T, B>(
         &mut self,
         cx: &mut Context,

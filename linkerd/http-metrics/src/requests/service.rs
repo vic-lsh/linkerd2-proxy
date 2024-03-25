@@ -132,6 +132,7 @@ where
     type Error = Error;
     type Future = ResponseFuture<P::Future, C>;
 
+    #[tracing::instrument(skip_all)]
     fn proxy(&self, svc: &mut S, req: http::Request<A>) -> Self::Future {
         let mut req_metrics = self.metrics.clone();
 
@@ -180,6 +181,7 @@ where
         self.inner.poll_ready(cx).map_err(Into::into)
     }
 
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, req: http::Request<A>) -> Self::Future {
         let mut req_metrics = self.metrics.clone();
 
@@ -266,6 +268,7 @@ where
         self.inner.is_end_stream()
     }
 
+    #[tracing::instrument(skip_all)]
     fn poll_data(
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,
@@ -333,6 +336,7 @@ where
     C: ClassifyEos,
     C::Class: Hash + Eq,
 {
+    #[tracing::instrument(skip_all)]
     fn record_latency(self: Pin<&mut Self>) {
         let this = self.project();
         let now = Instant::now();
@@ -356,6 +360,7 @@ where
         *this.latency_recorded = true;
     }
 
+    #[tracing::instrument(skip_all)]
     fn record_class(self: Pin<&mut Self>, class: C::Class) {
         let this = self.project();
         if let Some(lock) = this.metrics.take() {
@@ -363,6 +368,7 @@ where
         }
     }
 
+    #[tracing::instrument(skip_all)]
     fn measure_err(mut self: Pin<&mut Self>, err: Error) -> Error {
         if let Some(c) = self
             .as_mut()
@@ -377,6 +383,7 @@ where
     }
 }
 
+#[tracing::instrument(skip_all)]
 fn measure_class<C: Hash + Eq>(
     lock: &Arc<Mutex<Metrics<C>>>,
     class: C,

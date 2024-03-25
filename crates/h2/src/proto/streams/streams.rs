@@ -174,6 +174,7 @@ where
             .clear_expired_reset_streams(&mut me.store, &mut me.counts);
     }
 
+    #[tracing::instrument(skip_all)]
     pub fn poll_complete<T>(
         &mut self,
         cx: &mut Context,

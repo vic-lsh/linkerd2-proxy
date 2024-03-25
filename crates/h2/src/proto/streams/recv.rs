@@ -980,6 +980,7 @@ impl Recv {
         }
     }
 
+    #[tracing::instrument(skip_all)]
     pub fn poll_complete<T, B>(
         &mut self,
         cx: &mut Context,
@@ -1001,6 +1002,7 @@ impl Recv {
     }
 
     /// Send connection level window update
+    #[tracing::instrument(skip_all)]
     fn send_connection_window_update<T, B>(
         &mut self,
         cx: &mut Context,
@@ -1030,6 +1032,7 @@ impl Recv {
     }
 
     /// Send stream level window update
+    #[tracing::instrument(skip_all)]
     pub fn send_stream_window_updates<T, B>(
         &mut self,
         cx: &mut Context,

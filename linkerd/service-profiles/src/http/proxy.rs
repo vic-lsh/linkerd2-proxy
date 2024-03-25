@@ -86,6 +86,7 @@ where
     type Error = Error;
     type Future = ProxyResponseFuture<S::Future, S::Error, P::Future, P::Error>;
 
+    #[tracing::instrument(skip_all)]
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<()>> {
         // Poll the inner service first so we don't bother updating routes unless we can actually
         // use them.
@@ -115,6 +116,7 @@ where
         Poll::Ready(Ok(()))
     }
 
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, req: http::Request<B>) -> Self::Future {
         match super::route_for_request(&self.http_routes, &req) {
             None => future::Either::Left({

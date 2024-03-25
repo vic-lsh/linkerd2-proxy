@@ -36,6 +36,7 @@ where
 {
     type Service = S;
 
+    #[tracing::instrument(skip_all)]
     fn new_service(&self, target: T) -> Self::Service {
         let key = target.param();
         let inner = self.inner.new_service(target);
