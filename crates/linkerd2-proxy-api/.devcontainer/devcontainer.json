@@ -1,0 +1,31 @@
+{
+    "name": "linkerd2-proxy-api",
+    "image": "ghcr.io/linkerd/dev:v43",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "DavidAnson.vscode-markdownlint",
+                "golang.go",
+                "kokakiwi.vscode-just",
+                "NathanRidley.autotrim",
+                "rust-lang.rust-analyzer",
+                "samverschueren.final-newline",
+                "tamasfe.even-better-toml",
+                "zxh404.vscode-proto3"
+            ],
+            "settings": {
+                "protoc": {
+                    "path": "/usr/local/bin/protoc",
+                    "options": [
+                        "--proto_path=proto",
+                    ]
+                }
+            }
+        }
+    },
+    "runArgs": [
+        "--init"
+    ],
+    "overrideCommand": false,
+    "remoteUser": "code",
+}

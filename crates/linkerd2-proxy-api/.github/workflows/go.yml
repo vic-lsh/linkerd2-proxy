@@ -1,0 +1,24 @@
+name: go
+
+on:
+  pull_request:
+    paths:
+      - go.*
+      - '**/*.go'
+      - '**/*.proto'
+      - justfile
+      - .github/workflows/go.yml
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-go
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - run: just go-mod-check
+      - run: just go-gen-check
+      - run: just go-build

@@ -1,0 +1,73 @@
+name: rust
+
+on:
+  pull_request:
+    paths:
+      - Cargo.*
+      - '**/*.rs'
+      - '**/*.proto'
+      - justfile
+      - .github/workflows/rust.yml
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTFLAGS: "-D warnings -A deprecated"
+  RUSTUP_MAX_RETRIES: 10
+
+permissions:
+  contents: read
+
+jobs:
+  gen-check:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-rust
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - run: just rs-fetch
+      - run: just rs-gen-check
+
+  rust-clippy:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-rust
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - run: just rs-fetch
+      - run: just rs-clippy
+
+  rust-docs:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-rust
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - run: just rs-fetch
+      - run: just rs-docs
+
+  rust-test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-rust
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - run: just rs-fetch
+      - run: just rs-test-build
+      - run: just rs-test
+
+  rust-deps:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        checks:
+          - advisories
+          - bans licenses sources
+    # Prevent sudden announcement of a new advisory from failing Ci.
+    continue-on-error: ${{ matrix.checks == 'advisories' }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: EmbarkStudios/cargo-deny-action@68cd9c5e3e16328a430a37c743167572e3243e7e
+        with:
+          command: check ${{ matrix.checks }}

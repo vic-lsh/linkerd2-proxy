@@ -1,0 +1,88 @@
+name: release
+
+on:
+  pull_request:
+    paths:
+      - justfile
+      - .github/workflows/release.yml
+  push:
+    tags:
+      - 'v*'
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+
+permissions:
+  contents: read
+
+jobs:
+  meta:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - id: meta
+        shell: bash
+        run: |
+          ref='${{ github.ref }}'
+          if [[ "$ref" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo ::set-output name=publish::true
+            echo ::set-output name=version::"${ref##refs/tags/}"
+          else
+            sha=${{ github.sha }}
+            echo ::set-output name=version::"test-${sha:0:7}"
+          fi
+    outputs:
+      publish: ${{ steps.meta.outputs.publish }}
+      version: ${{ steps.meta.outputs.version }}
+
+  test:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-rust
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - run: just rs-fetch
+      - run: just rs-gen-check
+      - run: just rs-test-build
+      - run: just rs-test
+
+  # Publish a GitHub release with platform-specific static binaries.
+  release:
+    needs: [meta, test]
+    permissions:
+      contents: write
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-rust
+    steps:
+      - if: needs.meta.outputs.publish
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - if: needs.meta.outputs.publish
+        shell: bash
+        run: |
+          version=$(cargo metadata --format-version=1 | jq -r '.packages[] | select(.name == "linkerd2-proxy-api") | .version')
+          expected='${{ needs.meta.outputs.version }}'
+          if [[ "v${version}" != "$expected" ]]; then
+            echo "::error ::Crate version v${version} does not match tag $expected"
+            exit 1
+          fi
+      - if: needs.meta.outputs.publish
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
+        with:
+          name: ${{ needs.meta.outputs.version }}
+          generate_release_notes: true
+
+  crate:
+    # Only publish the crate after the rest of the release succeeds.
+    needs: [meta, release]
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/linkerd/dev:v43-rust
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - if: '!needs.meta.outputs.publish'
+        run: just rs-publish --dry-run
+      - if: needs.meta.outputs.publish
+        run: just rs-publish --token=${{ secrets.CRATESIO_TOKEN }}
