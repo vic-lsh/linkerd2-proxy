@@ -1,3 +1,10 @@
 [build]
 # tokio_unstable needed to enable tracing in tokio
 rustflags = ["--cfg", "tokio_unstable", "-Z", "threads=24"]
+# paths = [
+#     "crates/tokio/tokio",
+#     "crates/tokio/tokio-macros",
+#     "crates/tokio/tokio-stream",
+#     "crates/tokio/tokio-test",
+#     "crates/tokio/tokio-util",
+# ]

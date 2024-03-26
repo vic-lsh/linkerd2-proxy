@@ -17,10 +17,10 @@ async-trait = "0.1"
 futures = { version = "0.3", default-features = false }
 bytes = "1"
 linkerd-errno = { path = "../errno" }
-tokio = { version = "1", features = ["io-util", "net"] }
-tokio-test = { version = "0.4", optional = true }
-tokio-util = { version = "0.7", features = ["io"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["io-util", "net"] }
+tokio-test = { path = "../../crates/tokio/tokio-test", optional = true }
+tokio-util = { path = "../../crates/tokio/tokio-util", features = ["io"] }
 pin-project = "1"
 
 [dev-dependencies]
-tokio = { version = "1", features = ["rt", "macros"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["rt", "macros"] }

@@ -29,8 +29,9 @@ linkerd-tonic-stream = { path = "../tonic-stream" }
 rangemap = "1"
 regex = "1"
 thiserror = "1"
-tokio = { version = "1", features = ["rt"] }
-tokio-stream = { version = "0.1", features = ["time", "sync"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["rt"] }
+tokio-stream = { path = "../../crates/tokio/tokio-stream", features = ["time", "sync"] }
 tonic = { version = "0.10", default-features = false, features = ["prost"] }
-tower = "0.4"
+# tonic = { workspace = true, default-features = false, features = ["prost"] }
+tower = { workspace = true, features = ["full"] }
 tracing = "0.1"

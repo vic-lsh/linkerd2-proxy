@@ -20,4 +20,4 @@ thiserror = "1"
 [dev-dependencies]
 hyper = { path = "../../crates/hyper" }
 linkerd-tracing = { path = "../tracing", features = ["ansi"] }
-tokio = { version = "1", features = ["macros", "rt"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["macros", "rt"] }

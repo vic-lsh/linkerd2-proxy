@@ -15,7 +15,7 @@ linkerd-error = { path = "../error" }
 linkerd-io = { path = "../io" }
 linkerd-stack = { path = "../stack" }
 prost = "0.12"
-tokio = { version = "1", features = ["time"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["time"] }
 tracing = "0.1"
 
 [target.'cfg(fuzzing)'.dependencies]
@@ -24,5 +24,5 @@ libfuzzer-sys = { version = "0.4", features = ["arbitrary-derive"] }
 
 [dev-dependencies]
 prost-build = { version = "0.12", default-features = false }
-tokio = { version = "1", features = ["macros"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["macros"] }
 tokio-test = "0.4"

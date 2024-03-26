@@ -12,7 +12,7 @@ cargo-fuzz = true
 [dependencies]
 arbitrary = { version = "1",  features = ["derive"] }
 libfuzzer-sys = { version = "0.4.0", features = ["arbitrary-derive"] }
-tokio = { version = "1", features = [ "full" ] }
+tokio = { path = "../../tokio/tokio", features = [ "full" ] }
 h2 = { path = "../", features = [ "unstable" ] }
 h2-support = { path = "../tests/h2-support" }
 futures = { version = "0.3", default-features = false, features = ["std"] }

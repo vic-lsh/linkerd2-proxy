@@ -16,7 +16,7 @@ linkerd-addr = { path = "../../addr" }
 linkerd-dns = { path = "../../dns" }
 linkerd-proxy-core = { path = "../core" }
 linkerd-stack = { path = "../../stack" }
-tokio = { version = "1", features = ["sync"] }
-tokio-stream = { version = "0.1", features = ["sync"] }
-tower = "0.4"
+tokio = { path = "../../../crates/tokio/tokio", features = ["sync"] }
+tokio-stream = { path = "../../../crates/tokio/tokio-stream", features = ["sync"] }
+tower = { workspace = true }
 tracing = "0.1"

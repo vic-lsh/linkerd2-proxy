@@ -12,7 +12,7 @@ cargo-fuzz = true
 arbitrary = { version = "1", features = ["derive"] }
 libfuzzer-sys = { version = "0.4", features = ["arbitrary-derive"] }
 linkerd-transport-header = { path = ".." }
-tokio = { version = "1", features = ["full"] }
+tokio = { path = "../../../crates/tokio/tokio", features = ["full"] }
 tracing = "0.1"
 linkerd-tracing = { path = "../../tracing", features = ["ansi"] }
 

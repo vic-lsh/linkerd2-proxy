@@ -23,7 +23,7 @@ linkerd-meshtls-rustls = { path = "../../../meshtls/rustls", features = [
     "test-util",
 ] }
 linkerd-tracing = { path = "../../../tracing", features = ["ansi"] }
-tokio = { version = "1", features = ["full"] }
+tokio = { path = "../../../../crates/tokio/tokio", features = ["full"] }
 tracing = "0.1"
 
 # Prevent this from interfering with workspaces

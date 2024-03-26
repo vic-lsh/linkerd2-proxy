@@ -10,7 +10,7 @@ ahash = "0.8"
 futures = { version = "0.3", default-features = false }
 indexmap = "2"
 rand = "0.8"
-tokio = { version = "1", features = ["rt", "sync", "time"] }
+tokio = { path = "../../../crates/tokio/tokio", features = ["rt", "sync", "time"] }
 tracing = "0.1"
 
 linkerd-error = { path = "../../error" }
@@ -22,6 +22,7 @@ linkerd-proxy-balance-queue = { path = "queue" }
 linkerd-stack = { path = "../../stack" }
 
 [dependencies.tower]
-version = "0.4.13"
+# version = "0.4.13"
+workspace = true
 default-features = false
 features = ["load"]

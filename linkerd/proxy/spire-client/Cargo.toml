@@ -15,9 +15,9 @@ spiffe-proto = { path = "../../../spiffe-proto" }
 linkerd-tonic-watch = { path = "../../tonic-watch" }
 linkerd-exp-backoff = { path = "../../exp-backoff" }
 linkerd-stack = { path = "../../stack" }
-tokio = { version = "1", features = ["time", "sync"] }
+tokio = { path = "../../../crates/tokio/tokio", features = ["time", "sync"] }
 tonic = "0.10"
-tower = "0.4"
+tower = { workspace = true }
 tracing = "0.1"
 x509-parser = "0.15.1"
 asn1 = { version = "0.6", package = "simple_asn1" }
@@ -25,4 +25,4 @@ thiserror = "1"
 
 [dev-dependencies]
 rcgen = "0.11.3"
-tokio-test = "0.4"
+tokio-test = { path = "../../../crates/tokio/tokio-test" }

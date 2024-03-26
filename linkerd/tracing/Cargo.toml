@@ -15,7 +15,7 @@ stream = ["thingbuf", "slab"]
 linkerd-error = { path = "../error" }
 slab = { version = "0.4", optional = true }
 thingbuf = { version = "0.1.4", features = ["std"], optional = true }
-tokio = { version = "1", features = ["time"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["time"] }
 tracing = "0.1"
 tracing-log = "0.2"
 console-subscriber = "0.2.0"

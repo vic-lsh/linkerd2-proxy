@@ -12,7 +12,7 @@ bytes = "1"
 linkerd-error = { path = "../error" }
 linkerd-io = { path = "../io" }
 linkerd-stack = { path = "../stack" }
-tokio = { version = "1", features = ["time"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["time"] }
 thiserror = "1"
-tower = "0.4"
+tower = { workspace = true }
 tracing = "0.1"

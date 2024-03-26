@@ -41,15 +41,15 @@ linkerd-stack = { path = "../../stack" }
 pin-project = "1"
 rand = "0.8"
 thiserror = "1"
-tokio = { version = "1", features = ["rt", "sync", "time"] }
-tower = { version = "0.4", default-features = false }
+tokio = { path = "../../../crates/tokio/tokio", features = ["rt", "sync", "time"] }
+tower = { workspace = true, default-features = false }
 tracing = "0.1"
 try-lock = "0.2"
 
 [target.'cfg(fuzzing)'.dependencies]
-tokio-test = "0.4"
+tokio-test = { path = "../../../crates/tokio/tokio-test" }
 
 [dev-dependencies]
-tokio-test = "0.4"
+tokio-test = { path = "../../../crates/tokio/tokio-test" }
 tower-test = "0.4"
 linkerd-tracing = { path = "../../tracing", features = ["ansi"] }

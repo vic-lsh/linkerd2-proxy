@@ -7,5 +7,5 @@ edition = "2021"
 publish = false
 
 [dependencies]
-tokio = { version = "1", features = ["macros", "signal"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["macros", "signal"] }
 tracing = "0.1"

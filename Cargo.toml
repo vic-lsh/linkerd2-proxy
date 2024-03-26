@@ -4,6 +4,23 @@
 resolver = "2"
 
 members = [
+    # Vic: added to compile with vendored-in tokio.
+    "crates/tokio/tokio",
+    "crates/tokio/tokio-macros",
+    #"crates/tokio/tokio-test",
+    "crates/tokio/tokio-stream",
+    "crates/tokio/tokio-util",
+
+    "crates/boring/boring",
+    "crates/boring/boring-sys",
+    "crates/boring/tokio-boring",
+
+    "crates/tower/tower",
+    "crates/tower/tower-layer",
+    "crates/tower/tower-service",
+
+    "crates/tonic/tonic",
+
     "hyper-balance",
     "linkerd/addr",
     "linkerd/app/admin",
@@ -82,3 +99,32 @@ members = [
 debug = 1
 lto = true
 
+[workspace.dependencies]
+tower = { version = "0.4.13", path = "./crates/tower/tower" }
+tower-service = { version = "0.3.2", path = "./crates/tower/tower-service" }
+tower-layer = { version = "0.3.2", path = "./crates/tower/tower-layer" }
+tower-test = { version = "0.4.0", path = "./crates/tower/tower-test" }
+
+tonic = { version = "0.10.2", path = "./crates/tonic/tonic" }
+
+boring-sys = { version = "3", path = "./crates/boring/boring-sys" }
+boring = { version = "3", path = "./crates/boring/boring" }
+tokio-boring = { version = "3", path = "./crates/boring/tokio-boring" }
+
+bindgen = { version = "0.66.1", default-features = false, features = ["runtime"] }
+cmake = "0.1.18"
+fs_extra = "1.3.0"
+fslock = "0.2"
+bitflags = "2.4"
+foreign-types = "0.5"
+libc = "0.2"
+hex = "0.4"
+rusty-hook = "^0.11"
+futures = "0.3"
+tokio = { path = "./crates/tokio/tokio", features = ["full"] }
+anyhow = "1"
+antidote = "1.0.0"
+http = "0.2"
+hyper = { path = "./crates/hyper", default-features = false, features = ["full"] }
+linked_hash_set = "0.1"
+once_cell = "1.0"

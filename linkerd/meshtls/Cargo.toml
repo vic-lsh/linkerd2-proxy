@@ -28,7 +28,7 @@ linkerd-tls = { path = "../tls" }
 tracing = "0.1"
 
 [dev-dependencies]
-tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["macros", "net", "rt-multi-thread"] }
 tracing = "0.1"
 rcgen = "0.11.3"
 

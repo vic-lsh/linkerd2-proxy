@@ -17,6 +17,6 @@ tonic = { version = "0.10", default-features = false, features = [
     "prost",
     "codegen",
 ] }
-tokio = { version = "1", features = ["macros", "sync", "time"] }
-tokio-stream = { version = "0.1", features = ["sync"] }
+tokio = { path = "../../crates/tokio/tokio", features = ["macros", "sync", "time"] }
+tokio-stream = { path = "../../crates/tokio/tokio-stream", features = ["sync"] }
 tracing = "0.1"
