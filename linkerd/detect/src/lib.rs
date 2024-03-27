@@ -147,7 +147,8 @@ where
             let t0 = time::Instant::now();
 
             let mut buf = BytesMut::with_capacity(capacity);
-            let detected = match time::timeout(timeout, detect.detect(&mut io, &mut buf)).await {
+            let detected = match time::timeout(timeout, detect.detect(&mut io, &mut buf))
+                    .instrument(tracing::info_span!("ProtocolDetection")).await {
                 Ok(Ok(protocol)) => {
                     debug!(
                         ?protocol,

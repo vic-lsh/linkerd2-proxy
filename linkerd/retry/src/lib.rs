@@ -191,6 +191,7 @@ where
         <S as Service<Req>>::poll_ready(&mut self.inner, cx)
     }
 
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, req: Req) -> Self::Future {
         trace!(retryable = %self.policy.is_some());
 

@@ -1606,6 +1606,7 @@ dependencies = [
  "linkerd-error",
  "linkerd-stack",
  "pin-project",
+ "tracing",
 ]
 
 [[package]]

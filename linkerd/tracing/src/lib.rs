@@ -236,7 +236,7 @@ impl Settings {
         let (flame_layer, _guard) = FlameLayer::with_file("/logging/tracing.folded")
             .expect("creating flamegraph layer failed");
         let registry = registry
-            // .with(tracing_subscriber::fmt::Layer::default())
+            //.with(tracing_subscriber::fmt::Layer::default())
             .with(flame_layer);
 
         // The handle controls the logging system at runtime.

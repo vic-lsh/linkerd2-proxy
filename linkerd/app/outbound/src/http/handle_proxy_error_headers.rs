@@ -95,6 +95,7 @@ where
     }
 
     #[inline]
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, req: http::Request<A>) -> Self::Future {
         let client = req
             .extensions()

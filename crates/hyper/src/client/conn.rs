@@ -1103,6 +1103,7 @@ where
 {
     type Output = crate::Result<proto::Dispatched>;
 
+    #[tracing::instrument(skip_all)]
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         match self.project() {
             #[cfg(feature = "http1")]

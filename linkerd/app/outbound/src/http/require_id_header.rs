@@ -77,6 +77,7 @@ where
         self.inner.poll_ready(cx).map_err(Into::into)
     }
 
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, mut request: http::Request<B>) -> Self::Future {
         // If the `l5d-require-id` header is present, then we should expect the target's
         // `peer_identity` to match; if the two values do not match or there is no `peer_identity`,

@@ -175,7 +175,7 @@ impl Prioritize {
         let span =
             tracing::trace_span!("send_data", sz, requested = stream.requested_send_capacity);
         let _e = span.enter();
-        tracing::trace!(buffered = stream.buffered_send_data);
+        //tracing::trace!(buffered = stream.buffered_send_data);
 
         // Implicitly request more send capacity if not enough has been
         // requested yet.

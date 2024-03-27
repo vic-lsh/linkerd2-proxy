@@ -77,6 +77,7 @@ where
 {
     type Future = future::Ready<Self>;
 
+    #[tracing::instrument(skip_all)]
     fn retry(
         &self,
         req: &http::Request<ReplayBody<A>>,
@@ -154,6 +155,7 @@ where
         fn(http::Response<WithTrailers<B>>) -> Result<http::Response<WithTrailers<B>>, E>,
     >;
 
+    #[tracing::instrument(skip_all)]
     fn prepare_request(
         &self,
         req: http::Request<A>,
@@ -177,6 +179,7 @@ where
 
     /// If the response is HTTP/2, return a future that checks for a `TRAILERS`
     /// frame immediately after the first frame of the response.
+    #[tracing::instrument(skip_all)]
     fn prepare_response(rsp: http::Response<B>) -> Self::ResponseFuture {
         WithTrailers::map_response(rsp).map(Ok)
     }

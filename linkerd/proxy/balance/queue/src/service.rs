@@ -76,6 +76,7 @@ where
         poll
     }
 
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, req: Req) -> Self::Future {
         tracing::trace!("Sending request to worker");
         let (msg, rx) = Message::channel(req);

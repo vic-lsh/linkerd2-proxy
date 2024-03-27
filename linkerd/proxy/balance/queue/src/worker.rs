@@ -147,6 +147,7 @@ where
     /// Drives the pool, processing discovery updates.
     ///
     /// This never returns unless the pool or discovery stream fails.
+    #[tracing::instrument(skip_all)]
     async fn drive_pool<Req>(&mut self) -> Error
     where
         P: Pool<T, Req>,
@@ -187,6 +188,7 @@ where
 
     /// Waits for [`Service::poll_ready`], while also processing service
     /// discovery updates (e.g. to provide new available endpoints).
+    #[tracing::instrument(skip_all)]
     async fn ready_pool_for_request<Req>(&mut self) -> Result<(), Error>
     where
         P: Pool<T, Req>,

@@ -93,6 +93,7 @@ where
         self.inner.poll_ready(cx)
     }
 
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, req: http::Request<A>) -> Self::Future {
         // Record the request and obtain request-body and response taps.
         let mut req_taps = Vec::new();

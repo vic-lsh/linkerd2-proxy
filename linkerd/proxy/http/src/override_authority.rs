@@ -72,6 +72,7 @@ where
         self.inner.poll_ready(cx)
     }
 
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, mut req: http::Request<B>) -> Self::Future {
         if let Some(authority) = self.authority.clone() {
             for header in self.headers_to_strip.iter() {

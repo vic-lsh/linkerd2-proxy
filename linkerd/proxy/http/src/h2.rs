@@ -114,12 +114,12 @@ where
 
                 let (tx, conn) = builder
                     .handshake(io)
-                    .instrument(trace_span!("handshake").or_current())
+                    .instrument(trace_span!("do_handshake").or_current())
                     .await?;
 
                 tokio::spawn(
                     conn.map_err(|error| debug!(%error, "failed"))
-                        .instrument(trace_span!("conn").or_current()),
+                        .instrument(trace_span!("http_conn").or_current()),
                 );
 
                 Ok(Connection { tx })

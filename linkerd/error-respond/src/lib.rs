@@ -93,6 +93,7 @@ where
     }
 
     #[inline]
+    #[tracing::instrument(skip_all)]
     fn call(&mut self, req: Req) -> Self::Future {
         let respond = self.new_respond.new_respond(&req);
         let inner = self.inner.call(req);

@@ -130,6 +130,7 @@ where
         }))
     }
 
+    #[tracing::instrument(skip_all)]
     fn poll_inner(
         &mut self,
         cx: &mut Context<'_>,

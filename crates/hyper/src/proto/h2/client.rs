@@ -112,6 +112,7 @@ fn new_ping_config(config: &Config) -> ping::Config {
     }
 }
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn handshake<T, B>(
     io: T,
     req_rx: ClientRx<B>,
@@ -339,6 +340,7 @@ where
 {
     type Output = crate::Result<Dispatched>;
 
+    #[tracing::instrument(skip_all)]
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         loop {
             match ready!(self.h2_tx.poll_ready(cx)) {
